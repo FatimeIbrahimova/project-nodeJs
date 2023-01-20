@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import "../styles.css"
-import { Link } from 'react-router-dom';
+import { Link } from '@mui/material'
+import Swal from 'sweetalert2'
+
 
 const Home = () => {
      const [users,setUsers]=useState([])
@@ -15,25 +17,46 @@ const Home = () => {
     getData()
   },[])
   console.log(users);
+
+  const deleteData = (id) => {
+    console.log(id);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`http://localhost:8080/users/${id}`);
+        getData();
+        Swal.fire(
+          'Deleted!',
+          'Your product has been deleted.',
+          'success'
+        )
+      }
+    })
+  };
   return (
     <>
-      
-      
-       <section class="py-5">
-            <div class="container px-4 px-lg-5 mt-5">
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+       <section className="py-5">
+            <div className="container px-4 px-lg-5 mt-5">
+                <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 {users?.map((user)=>(
-                        <div class="col mb-5">
-                        <div class="card h-100">
-                            <img class="card-img-top" src={user.image} alt="..." />
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <h5 class="fw-bolder">{user.name}</h5>
-                                    $40.00 - $80.00
+                        <div className="col mb-5" key={user.id}>
+                        <div className="card h-100">
+                            <img className="card-img-top" src={user.image} alt="..." />
+                            <div className="card-body p-4">
+                                <div className="text-center">
+                                    <h5 className="fw-bolder">{user.name}</h5>
+                                    ${user.price}
                                 </div>
                             </div>
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
+                            <div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div className="text-center" onClick={()=>deleteData(user.id)}><Link style={{textDecoration:"none"}} className="btn btn-outline-dark mt-auto" >Delete</Link></div>
                             </div>
                         </div>
                     </div>
